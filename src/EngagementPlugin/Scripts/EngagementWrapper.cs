@@ -9,42 +9,46 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
+#if UNITY_WSA
+using Microsoft.Azure.Engagement;
+#endif
+
 namespace Microsoft.Azure.Engagement.Unity
 {
-	internal class EngagementWrapper
+    internal class EngagementWrapper
     {
 
 #if UNITY_EDITOR
 
-		public static  void initializeReach() { }
-		public static  void startActivity( string _activityName, string _extraInfos) { }
-		public static  void endActivity() { }
-		public static  void startJob( string _jobName, string _extraInfos) { }
-		public static  void endJob( string _jobName ) { }
-		public static  void sendEvent( string _eventName, string _extraInfos) { }
-		public static  void sendAppInfo( string _extraInfos) { }
-		public static  void sendSessionEvent(string _eventName, string _extraInfosJSON) { }
-		public static  void sendJobEvent(string _eventName, string _jobName,string _extraInfosJSON) { }
-		public static  void sendError(string _errorName, string _extraInfosJSON) { }
-		public static  void sendSessionError(string _errorName, string _extraInfosJSON) { }
-		public static  void sendJobError(string _errorName, string _jobName, string _extraInfosJSON) { }
-		public static  void registerForPushNotification()  { }
-		public static  void onApplicationPause(bool _paused ) { }
-		public static  void setEnabled(bool _enabled ) { }
-		public static  void getStatus() 
-		{ 
-			Dictionary<string, object> status = new Dictionary<string, object>();
-			status.Add("deviceId", "UnityEditor");
-			status.Add("pluginVersion", EngagementAgent.PLUGIN_VERSION);
-			status.Add("nativeVersion", "0");
-			status.Add("isEnabled", false);
-			string serialized = MiniJSON.Json.Serialize(status);	
-			EngagementAgent.Instance().onStatusReceived (serialized);
-		}
-		public	static void saveUserPreferences() {}
-		public	static void restoreUserPreferences() {}
+        public static void initializeReach() { }
+        public static void startActivity(string _activityName, string _extraInfos) { }
+        public static void endActivity() { }
+        public static void startJob(string _jobName, string _extraInfos) { }
+        public static void endJob(string _jobName) { }
+        public static void sendEvent(string _eventName, string _extraInfos) { }
+        public static void sendAppInfo(string _extraInfos) { }
+        public static void sendSessionEvent(string _eventName, string _extraInfosJSON) { }
+        public static void sendJobEvent(string _eventName, string _jobName, string _extraInfosJSON) { }
+        public static void sendError(string _errorName, string _extraInfosJSON) { }
+        public static void sendSessionError(string _errorName, string _extraInfosJSON) { }
+        public static void sendJobError(string _errorName, string _jobName, string _extraInfosJSON) { }
+        public static void registerForPushNotification() { }
+        public static void onApplicationPause(bool _paused) { }
+        public static void setEnabled(bool _enabled) { }
+        public static void getStatus()
+        {
+            Dictionary<string, object> status = new Dictionary<string, object>();
+            status.Add("deviceId", "UnityEditor");
+            status.Add("pluginVersion", EngagementAgent.PLUGIN_VERSION);
+            status.Add("nativeVersion", "0");
+            status.Add("isEnabled", false);
+            string serialized = MiniJSON.Json.Serialize(status);
+            EngagementAgent.Instance().onStatusReceived(serialized);
+        }
+        public static void saveUserPreferences() { }
+        public static void restoreUserPreferences() { }
 
- #elif UNITY_IPHONE 
+#elif UNITY_IPHONE
    
 		[DllImport("__Internal")]
 		public static extern void initializeEngagement(string _instanceName );
@@ -211,8 +215,10 @@ namespace Microsoft.Azure.Engagement.Unity
 			javaClass.CallStatic("onApplicationPause",_paused);
 		}
 	
+#elif UNITY_WSA
+    // Nothing Here
 #else
-#	error "unsupported platform"
+#error "unsupported platform"
 #endif
 
     }

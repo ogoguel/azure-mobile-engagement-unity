@@ -1,4 +1,5 @@
-﻿/*
+
+/*
  * Copyright (c) Microsoft Corporation.  All rights reserved.
  * Licensed under the MIT license. See License.txt in the project root for license information.
  */
@@ -23,6 +24,11 @@ namespace Microsoft.Azure.Engagement.Unity
     /// (Required) Your Android Engagement application connection string.
     /// </summary>
     public const string ANDROID_CONNECTION_STRING = null;
+
+    /// <summary>
+    /// (Required) Your Windows Engagement application connection string.
+    /// </summary>
+    public const string WINDOWS_CONNECTION_STRING = null; 
 
     /// <summary>
     /// Enable\Disable console logs on native SDKs.
@@ -89,4 +95,5 @@ namespace Microsoft.Azure.Engagement.Unity
     public const string ANDROID_GOOGLE_PROJECT_NUMBER = null;	
 	}
 }
+
 

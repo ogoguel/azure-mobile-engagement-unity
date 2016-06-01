@@ -63,13 +63,34 @@ namespace Microsoft.Azure.Engagement.Unity
 				Debug.LogError ("Agent must be initialized before initializing Reach");
 				return ;
 			}
-
+#if UNITY_WSA && !UNITY_EDITOR
+#else
 			EngagementWrapper.initializeReach();
-		}
+#endif
+        }
 
-		// Delegates from Native
+        // Delegates from Native
 
-		public static void onDataPushMessage(string _serialized)
+        public static void onDataPushString(string _category,string _body)
+        {
+            EngagementAgent.Logging("onDataPushString, category:" + _category);
+            if (StringDataPushReceived != null)
+                StringDataPushReceived(_category, _body);
+            else
+                EngagementAgent.Logging("WARNING: unitialized StringDataPushReceived");
+        }
+
+        public static void onDataPushBase64(string _category, byte [] _data, string _body)
+        {
+            EngagementAgent.Logging("onDataPushBase64, category:" + _category);
+            if (Base64DataPushReceived != null)
+                Base64DataPushReceived(_category, _data, _body);
+            else
+                EngagementAgent.Logging("WARNING: unitialized Base64DataPushReceived");
+        }
+
+
+        public static void onDataPushMessage(string _serialized)
 		{
 			Dictionary<string, object> dict = (Dictionary<string, object>)MiniJSON.Json.Deserialize(_serialized);
 			string category = null;
@@ -81,23 +102,14 @@ namespace Microsoft.Azure.Engagement.Unity
 			EngagementAgent.Logging ("DataPushReceived, category: " + category+", isBase64:"+isBase64);
 
 			if (isBase64 == false) {
-				if (StringDataPushReceived != null)
-				{
-					body = WWW.UnEscapeURL (dict["body"].ToString(),System.Text.Encoding.UTF8);
-					StringDataPushReceived (category, body);
-				}
-				else
-					EngagementAgent.Logging ("WARNING: unitialized StringDataPushReceived");
-
+                body = WWW.UnEscapeURL(dict["body"].ToString(), System.Text.Encoding.UTF8);
+                onDataPushString(category,body);
+            
 			} else {
-				if (Base64DataPushReceived != null) {
-					body = dict ["body"].ToString ();
-					byte[] data = Convert.FromBase64String (body);
-					Base64DataPushReceived (category, data,body);
-				}
-				else
-					EngagementAgent.Logging ("WARNING: unitialized Base64DataPushReceived");
-			}
+                    body = dict ["body"].ToString ();
+                    byte[] data = Convert.FromBase64String(body);
+                    onDataPushBase64(category, data,body);
+			}	
 		}
 
 		public static  void onHandleURLMessage(string _url)

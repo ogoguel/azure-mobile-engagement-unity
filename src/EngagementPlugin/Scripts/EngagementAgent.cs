@@ -9,12 +9,15 @@ using System.Collections.Generic;
 using System.Reflection;
 using System;
 
+#if UNITY_WSA && !UNITY_EDITOR
+using Windows.ApplicationModel.Activation;
+using Microsoft.Azure.Engagement;
+#endif
 
 #pragma warning disable 162,429
 
 namespace Microsoft.Azure.Engagement.Unity
-{
-	
+{	
 	public enum LocationReportingType 
 	{
 		NONE=100,
@@ -32,22 +35,27 @@ namespace Microsoft.Azure.Engagement.Unity
 	
 	public class EngagementAgent : MonoBehaviour
 	{
-		public const string PLUGIN_VERSION = "1.0.0";
+
+		public const string PLUGIN_VERSION = "1.1.0";
 
 		static EngagementAgent _instance = null;
 
 		public  Action<Dictionary<string, object>> 	onStatusReceivedDelegate ;
 	
 		public static bool hasBeenInitialized = false;
-		
-		private EngagementAgent()
+
+#if UNITY_WSA && !UNITY_EDITOR
+        public static string lastURI = null;
+#endif
+
+        private EngagementAgent()
 		{
 
 		}
 
 		public static void Logging(string _message)
 		{
-			if (EngagementConfiguration.ENABLE_PLUGIN_LOG)
+			if (Microsoft.Azure.Engagement.Unity.EngagementConfiguration.ENABLE_PLUGIN_LOG)
 				Debug.Log("[Engagement] " + _message);
 		}
 		
@@ -66,10 +74,27 @@ namespace Microsoft.Azure.Engagement.Unity
 			return _instance;
 		}
 
-		public static void Initialize()
+#if UNITY_WSA && !UNITY_EDITOR
+        public static void processURI()
+        {
+            if (hasBeenInitialized == false)
+                return ;
+
+            if (lastURI != null)
+            {
+                Debug.Log("processing "+lastURI);
+                EngagementReach.onHandleURLMessage(lastURI);
+                lastURI = null;
+            }
+        }
+#endif
+
+        public static void Initialize()
 		{
-	
+
 #if UNITY_EDITOR
+#elif UNITY_WSA
+        //    Logging("Initialize");
 #elif UNITY_IPHONE
 			EngagementWrapper.initializeEngagement(Instance().name);
 #elif UNITY_ANDROID
@@ -84,83 +109,130 @@ namespace Microsoft.Azure.Engagement.Unity
 									EngagementConfiguration.ENABLE_PLUGIN_LOG
 									);
 #endif
-			hasBeenInitialized = true;
+            hasBeenInitialized = true;
+#if UNITY_WSA && !UNITY_EDITOR
+            processURI();
+#endif
 		}
 	
 		public static void StartActivity(string _activityName,Dictionary<object, object> _extraInfos = null)
 		{
-			string _extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);
-			Logging("startActivity:"+ _activityName+", "+_extraInfosJSON);
+            Logging("startActivity:" + _activityName);
+#if UNITY_WSA && !UNITY_EDITOR
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.StartActivity(_activityName, _extraInfos);
+#else
+            string _extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);
 			EngagementWrapper.startActivity(_activityName,_extraInfosJSON);
-		}
+#endif
+        }
 
-		public static void EndActivity()
+        public static void EndActivity()
 		{
-			Logging("endActivity");	
-			EngagementWrapper.endActivity();
+			Logging("endActivity");
+#if UNITY_WSA && !UNITY_EDITOR
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.EndActivity();
+#else
+            EngagementWrapper.endActivity();
+#endif
 		}
 
 		public static void StartJob(string _jobName,Dictionary<object, object> _extraInfos = null)
 		{
-			string _extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);
-			Logging("startJob:"+ _jobName+", "+_extraInfosJSON);
-			EngagementWrapper.startJob(_jobName,_extraInfosJSON);
-		}
+            Logging("startJob:" + _jobName );
+#if UNITY_WSA && !UNITY_EDITOR
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.StartJob(_jobName);
+#else
+            string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
+			EngagementWrapper.startJob(_jobName,extraInfosJSON);
+#endif
+        }
 
-		public static void EndJob(string _jobName)
+        public static void EndJob(string _jobName)
 		{
-			Logging("endJob:"+ _jobName);
-			EngagementWrapper.endJob(_jobName);
+            Logging("endJob:" + _jobName);
+#if UNITY_WSA && !UNITY_EDITOR
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.EndJob(_jobName);
+#else
+            EngagementWrapper.endJob(_jobName);
+#endif
 		}
 
 		public static void SendEvent(string _eventName, Dictionary<object, object> _extraInfos = null)
 		{
-			string _extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);
-			Logging("sendEvent:"+ _eventName+" ,"+_extraInfosJSON);
-			EngagementWrapper.sendEvent(_eventName,_extraInfosJSON);
-		}
+            Logging("sendEvent:" + _eventName );
+#if UNITY_WSA && !UNITY_EDITOR
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.SendEvent(_eventName,_extraInfos);
+#else
+            string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
+			EngagementWrapper.sendEvent(_eventName,extraInfosJSON);
+#endif
+        }
 
-		public static void SendAppInfo( Dictionary<object, object> _extraInfos)
+        public static void SendAppInfo( Dictionary<object, object> _extraInfos)
 		{
-			string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
-			Logging("sendAppInfo:"+extraInfosJSON);
+            Logging("sendAppInfo");
+#if UNITY_WSA && !UNITY_EDITOR
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.SendAppInfo(_extraInfos);
+#else
+            string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
 			EngagementWrapper.sendAppInfo(extraInfosJSON);
-		}
+#endif
+        }
 
-		public static void SendSessionEvent(string _eventName, Dictionary<object, object> _extraInfos = null)
+        public static void SendSessionEvent(string _eventName, Dictionary<object, object> _extraInfos = null)
 		{
-			string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
-			Logging("SendSessionEvent:"+_eventName+" ,"+extraInfosJSON);
-			EngagementWrapper.sendSessionEvent(_eventName,extraInfosJSON);
-		}
+            Logging("SendSessionEvent:" + _eventName );
+#if UNITY_WSA && !UNITY_EDITOR
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.SendSessionEvent(_eventName,_extraInfos);
+#else
+            string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);
+            EngagementWrapper.sendSessionEvent(_eventName,extraInfosJSON);
+#endif
+        }
 
-		public static void SendJobEvent(string _eventName, string _jobName, Dictionary<object, object> _extraInfos = null)
+        public static void SendJobEvent(string _eventName, string _jobName, Dictionary<object, object> _extraInfos = null)
 		{
-			string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
-			Logging("SendJobEvent:"+_eventName+", Job: "+_jobName+" ,"+extraInfosJSON);
+            Logging("SendJobEvent:" + _eventName + ", Job: " + _jobName);
+#if UNITY_WSA && !UNITY_EDITOR
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.SendJobEvent(_eventName, _jobName, _extraInfos);
+#else
+            string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
 			EngagementWrapper.sendJobEvent(_eventName,_jobName,extraInfosJSON);
-		}
+#endif
+        }
 
 		public static void SendError(string _errorName, Dictionary<object, object> _extraInfos = null)
 		{
-			string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
-			Logging("SendError:"+_errorName+" ,"+extraInfosJSON);
+            Logging("SendError:" + _errorName);
+#if UNITY_WSA && !UNITY_EDITOR
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.SendError(_errorName, _extraInfos);
+#else
+            string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
 			EngagementWrapper.sendError(_errorName,extraInfosJSON);
-		}
+#endif
+        }
 
 		public static void SendSessionError(string _errorName, Dictionary<object, object> _extraInfos = null)
 		{
-			string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
-			Logging("SendSessionError:"+_errorName+" ,"+extraInfosJSON);
+            Logging("SendSessionError:" + _errorName);
+#if UNITY_WSA && !UNITY_EDITOR
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.SendSessionError(_errorName, _extraInfos);
+#else
+            string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
 			EngagementWrapper.sendSessionError(_errorName,extraInfosJSON);
-		}
+#endif
+        }
 
 		public static void SendJobError(string _errorName, string _jobName, Dictionary<object, object> _extraInfos = null)
 		{
-			string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
-			Logging("SendJobError:"+_errorName+", Job: "+_jobName+" ,"+extraInfosJSON);
+            Logging("SendJobError:" + _errorName + ", Job: " + _jobName );
+#if UNITY_WSA && !UNITY_EDITOR
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.SendJobError(_errorName, _jobName, _extraInfos);
+#else
+            string extraInfosJSON = MiniJSON.Json.Serialize(_extraInfos);	
 			EngagementWrapper.sendJobError(_errorName,_jobName,extraInfosJSON);
-		}
+#endif
+        }
 
 		public static void GetStatus(Action<Dictionary<string, object>> _onStatusReceived)
 		{
@@ -168,33 +240,53 @@ namespace Microsoft.Azure.Engagement.Unity
 				Debug.LogError ("_onStatusReceived cannot be null");
 			else
 			{
-				Instance().onStatusReceivedDelegate = _onStatusReceived;
-				EngagementWrapper.getStatus();
+#if UNITY_WSA && !UNITY_EDITOR
+                Dictionary<string, object> status = new Dictionary<string, object>();
+                status.Add("deviceId", Microsoft.Azure.Engagement.EngagementAgent.Instance.GetDeviceId());
+                status.Add("pluginVersion", EngagementAgent.PLUGIN_VERSION);
+                status.Add("nativeVersion", "3.4.0");
+                status.Add("isEnabled", true);
+                _onStatusReceived(status);
+#else
+                Instance().onStatusReceivedDelegate = _onStatusReceived;
+                EngagementWrapper.getStatus();
+#endif
 			}
 		}
 
 		public static void SaveUserPreferences()
 		{
+#if UNITY_WSA && !UNITY_EDITOR
+#else
 			EngagementWrapper.saveUserPreferences ();
-		}
+#endif
+        }
 		
 		public static void RestoreUserPreferences()
 		{
+#if UNITY_WSA && !UNITY_EDITOR
+#else
 			EngagementWrapper.restoreUserPreferences ();
-		}
+#endif
+        }
 
 		public static void SetEnabled(bool _enable)
 		{
-			EngagementWrapper.setEnabled (_enable);
-		}
+#if UNITY_WSA && !UNITY_EDITOR
+#else
+            EngagementWrapper.setEnabled (_enable);
+#endif
+        }
 
 		// Delegate from Unity
 
 		public void OnApplicationPause(bool pauseStatus)
 		{
-			Logging ("OnApplicationPause:" + pauseStatus);
+#if UNITY_WSA && !UNITY_EDITOR
+#else
 			EngagementWrapper.onApplicationPause (pauseStatus);
-		}
+#endif
+        }
 
 		// Delegates from Native
 
@@ -213,17 +305,54 @@ namespace Microsoft.Azure.Engagement.Unity
 		public  void onDataPushReceived(string _serialized)
 		{
 			EngagementReach.onDataPushMessage (_serialized);
-
 		}
-		
-		public  void onHandleURL(string _url)
+
+        public  void onHandleURL(string _url)
 		{
 			EngagementReach.onHandleURLMessage (_url);
-	
 		}
 
-	}
-	
+#if UNITY_WSA && !UNITY_EDITOR
+        public static void initEngagement(IActivatedEventArgs args)
+        { 
+            if (EngagementConfiguration.ENABLE_PLUGIN_LOG == true)
+                Microsoft.Azure.Engagement.EngagementAgent.Instance.TestLogLevel = EngagementTestLogLevel.Verbose;
+            else
+                Microsoft.Azure.Engagement.EngagementAgent.Instance.TestLogLevel = EngagementTestLogLevel.Off;
+
+            Microsoft.Azure.Engagement.EngagementConfiguration engagementConfiguration = new Microsoft.Azure.Engagement.EngagementConfiguration();
+            engagementConfiguration.Agent.ConnectionString = EngagementConfiguration.WINDOWS_CONNECTION_STRING;
+            engagementConfiguration.Reach.EnableNativePush = true;
+            Microsoft.Azure.Engagement.EngagementAgent.Instance.Init(args, engagementConfiguration);
+            Microsoft.Azure.Engagement.EngagementReach.Instance.Init(args);
+
+            Microsoft.Azure.Engagement.EngagementReach.Instance.DataPushStringReceived += (body) =>
+            {
+                EngagementReach.onDataPushString(null, body);
+                return true;
+            };
+
+            Microsoft.Azure.Engagement.EngagementReach.Instance.DataPushBase64Received += (decodedBody, encodedBody) =>
+            {
+                EngagementReach.onDataPushBase64(null, decodedBody, encodedBody);
+                return true;
+            };
+        }
+
+        public static void initEngagementOnActivated(IActivatedEventArgs args)
+        { 
+            if (args.Kind == ActivationKind.Protocol)
+            {
+                ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
+                lastURI = eventArgs.Uri.AbsoluteUri;
+                Logging("Got URI "+lastURI);
+                processURI();
+             }
+            initEngagement(args);
+        }
+#endif
+    }
+
 }
 
-#pragma warning restore 162,429
+#pragma warning restore 162, 429
