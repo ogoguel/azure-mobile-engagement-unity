@@ -11,6 +11,8 @@ The configuration of your application is performed via an `EngagementConfigurati
 
 ##### Engagement Configuration
 
+###### Windows Universal 10 / Windows Phone 8.1
+- `WINDOWS_CONNECTION_STRING` : the Android connection string (to retrieve from the Engagement portal)
 ###### Android
 - `ANDROID_CONNECTION_STRING` : the Android connection string (to retrieve from the Engagement portal)
 - `ANDROID_UNITY3D_ACTIVITY`: needs to be filled if your application does not use the default Unity Activity (`com.unity3d.player.UnityPlayerActivity`)
@@ -22,7 +24,7 @@ The configuration of your application is performed via an `EngagementConfigurati
 ###### Generic
 - `ENABLE_PLUGIN_LOG` : `true`|`false`, enable the plugin debug logs
 - `ENABLE_NATIVE_LOG` : `true`|`false`, enable the Engagement native SDK to debug logs
-- It is recommended to set both to `true` while working on the plugin integratin.
+- It is recommended to set both to `true` while working on the plugin integration.
 
 ##### Location Reporting
 - `LOCATION_REPORTING_TYPE`: Can be one of the following (please refer to the Native SDK documentation for more information)
@@ -150,4 +152,5 @@ The source code of the plugin are included in the `src/`directory. To build the 
 It only works on Mac OSX, with XCode, Unity and Android Studio installed.
 
 ### History
+* 1.1.0 Added Windows Phone 8.1/Windows Universal 10 support
 * 1.0.0 First release

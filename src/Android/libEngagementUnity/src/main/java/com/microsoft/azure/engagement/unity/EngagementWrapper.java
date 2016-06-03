@@ -21,7 +21,8 @@ import com.unity3d.player.UnityPlayer;
 public class EngagementWrapper {
 
     private static final String pluginName = "UNITY";
-    private static final String pluginVersion = "1.0.0";
+
+    private static final String pluginVersion = "1.1.0";
     private static final String nativeVersion = "4.1.3"; // to eventually retrieve from the SDK itself
     private static final String unityMethod_onDataPushReceived = "onDataPushReceived";
     private static final String unityMethod_onHandleUrl = "onHandleURL";
