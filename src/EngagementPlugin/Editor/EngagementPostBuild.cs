@@ -88,6 +88,7 @@ public class EngagementPostBuild
         engagementTextAnnouncementActivity.Attributes.Append(doc.CreateAttribute("tag")).Value = tagName;
         engagementTextAnnouncementActivity.Attributes.Append(doc.CreateAttribute("android", "theme", EngagementPostBuild.androidNS)).Value = "@android:style/Theme." + theme;
         engagementTextAnnouncementActivity.Attributes.Append(doc.CreateAttribute("android", "name", EngagementPostBuild.androidNS)).Value = "com.microsoft.azure.engagement.reach.activity." + activityName;
+        engagementTextAnnouncementActivity.Attributes.Append(doc.CreateAttribute("android", "exported", EngagementPostBuild.androidNS)).Value = "false";
 
         XmlNode engagementTextAnnouncementIntent = doc.CreateNode(XmlNodeType.Element, "intent-filter", null);
         engagementTextAnnouncementIntent.Attributes.Append(doc.CreateAttribute("tag")).Value = tagName;

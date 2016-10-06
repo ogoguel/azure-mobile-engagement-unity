@@ -128,7 +128,15 @@ public class EngagementShared  {
     }
 
     public void setEnabled(boolean _enabled)  {
+        logD("setEnabled:"+_enabled);
         EngagementAgent.getInstance(androidActivity).setEnabled(_enabled);
+    }
+
+    public boolean isEnabled()
+    { 
+        boolean b = EngagementAgent.getInstance(androidActivity).isEnabled();
+        logD("isEnabled:"+b);
+        return b;
     }
 
     public void setDelegate(EngagementDelegate _delegate)
@@ -387,8 +395,16 @@ public class EngagementShared  {
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    public JSONObject requestPermissions(JSONArray _permissions)
+    public JSONObject requestPermissions(boolean _realtimeLocation, boolean _fineRealtimeLocation, boolean _lazyAreaLocation)
     {
+
+	  	JSONArray permissions = new JSONArray();
+        
+        if (_fineRealtimeLocation)
+            permissions.put("ACCESS_FINE_LOCATION");
+        else if (_lazyAreaLocation || _realtimeLocation)
+            permissions.put("ACCESS_COARSE_LOCATION");
+
         JSONObject ret = new JSONObject();
         JSONObject p = new JSONObject();
         String[] requestedPermissions = null;
@@ -405,11 +421,11 @@ public class EngagementShared  {
 
         logD("requestPermissions()");
 
-          int l = _permissions.length();
+          int l = permissions.length();
           for(int i=0;i<l;i++)
           {
               try {
-                  String permission = _permissions.getString(i);
+                  String permission = permissions.getString(i);
                   String androidPermission = "android.permission."+permission;
 
                   int grant = androidActivity.checkCallingOrSelfPermission(androidPermission);
