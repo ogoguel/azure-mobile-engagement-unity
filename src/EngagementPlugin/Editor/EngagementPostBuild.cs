@@ -609,6 +609,10 @@ public class EngagementPostBuild
 			string CTFramework = "CoreTelephony.framework";
 			Debug.Log("Adding "+ CTFramework + " to XCode Project");
 			pbx.AddFrameworkToProject(targetUID,CTFramework,true);
+
+			string UNFramework = "UserNotifications.framework";
+			Debug.Log("Adding "+ UNFramework + " to XCode Project");
+			pbx.AddFrameworkToProject(targetUID,UNFramework,true);
 			 
 		
 			const string disableAll = "ENGAGEMENT_UNITY=1,ENGAGEMENT_DISABLE_IDFA=1";
