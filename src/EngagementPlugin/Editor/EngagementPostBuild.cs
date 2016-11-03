@@ -612,7 +612,7 @@ public class EngagementPostBuild
 
 			string UNFramework = "UserNotifications.framework";
 			Debug.Log("Adding "+ UNFramework + " to XCode Project");
-			pbx.AddFrameworkToProject(targetUID,UNFramework,true);
+			pbx.AddFrameworkToProject(targetUID,UNFramework,false);
 			 
 		
 			const string disableAll = "ENGAGEMENT_UNITY=1,ENGAGEMENT_DISABLE_IDFA=1";
