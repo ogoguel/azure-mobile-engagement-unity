@@ -12,7 +12,7 @@ The configuration of your application is performed via an `EngagementConfigurati
 ##### Engagement Configuration
 
 ###### Windows Universal 10 / Windows Phone 8.1
-- `WINDOWS_CONNECTION_STRING` : the Android connection string (to retrieve from the Engagement portal)
+- `WINDOWS_CONNECTION_STRING` : the Windows connection string (to retrieve from the Engagement portal)
 ###### Android
 - `ANDROID_CONNECTION_STRING` : the Android connection string (to retrieve from the Engagement portal)
 - `ANDROID_UNITY3D_ACTIVITY`: needs to be filled if your application does not use the default Unity Activity (`com.unity3d.player.UnityPlayerActivity`)
@@ -51,7 +51,9 @@ The configuration of your application is performed via an `EngagementConfigurati
 - `ANDROID_GOOGLE_PROJECT_NUMBER` : the project number used as the GCM (Google Cloud Messaging) sender ID
 
 ##### Notes
-* Do not follow the installation instruction from the Engagement native SDK for Android in iOS : in the Unity Engagement SDK, the application configuration is performed automatically (cf. `EngagementPlugin/Editor/EngagementPostBuild.cs` to see how it works under the hood).
+* On iOS, you need to add enable the Push Notification in your XCode capabilities  
+* Do not follow the installation instruction from the Engagement native SDK for Android or iOS : in the Unity Engagement SDK, the application configuration is performed automatically (cf. `EngagementPlugin/Editor/EngagementPostBuild.cs` to see how it works under the hood).
+
 
 ###  Basic Integration
 To initialize the Engagement service, just call `EngagementAgent.Initialize()`. No arguments are needed as the credentials are automatically retrieved from the `EngagementConfiguration`class.
@@ -152,8 +154,17 @@ The source code of the plugin are included in the `src/`directory. To build the 
 It only works on Mac OSX, with XCode, Unity and Android Studio installed.
 
 ### History
-* 1.1.0 Added Windows Phone 8.1/Windows Universal 10 support
-* 1.0.0 First release
+
+##### 1.2.0 
+* Updated iOS SDK to 4.0.0
+* Updated Android SDK to 4.2.3
+* Fix iOS support for Unity 5.3.1+ versions
+
+##### 1.1.0 
+* Added Windows Phone 8.1/Windows Universal 10 support
+
+##### 1.0.0 
+* Initial release
 
 ## Open Source Code of Conduct
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.

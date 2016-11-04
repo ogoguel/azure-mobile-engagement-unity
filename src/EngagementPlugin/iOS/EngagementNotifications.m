@@ -19,6 +19,8 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
+#if !defined(UNITY_5_3_1) || UNITY_VERSION < UNITY_5_3_1
+// Temp fix while waiting the release of https://issuetracker.unity3d.com/issues/ios-remote-notifications-not-triggering-in-foreground
 - (void)application:(UIApplication *)application  engagementDidReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler
 {
     id instance =[NSClassFromString(@"EngagementShared") performSelector:NSSelectorFromString(@"instance")];
@@ -27,6 +29,8 @@
     // call the previous implementation (and not itself!)
     [self application:application engagementDidReceiveRemoteNotification:userInfo fetchCompletionHandler:handler];
 }
+
+#endif
 
 - (BOOL)application:(UIApplication*)application engagementDidFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {   
@@ -69,9 +73,11 @@
 }
 
 +(void)load
-{   
+{
+#if !defined(UNITY_5_3_1) || UNITY_VERSION < UNITY_5_3_1
     [self swizzleInstanceSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
                   withNewSelector:@selector(application:engagementDidReceiveRemoteNotification:fetchCompletionHandler:)];
+#endif
     [self swizzleInstanceSelector:@selector(application:didFinishLaunchingWithOptions:)
                   withNewSelector:@selector(application:engagementDidFinishLaunchingWithOptions:)];
  }

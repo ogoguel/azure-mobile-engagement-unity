@@ -88,6 +88,7 @@ public class EngagementPostBuild
         engagementTextAnnouncementActivity.Attributes.Append(doc.CreateAttribute("tag")).Value = tagName;
         engagementTextAnnouncementActivity.Attributes.Append(doc.CreateAttribute("android", "theme", EngagementPostBuild.androidNS)).Value = "@android:style/Theme." + theme;
         engagementTextAnnouncementActivity.Attributes.Append(doc.CreateAttribute("android", "name", EngagementPostBuild.androidNS)).Value = "com.microsoft.azure.engagement.reach.activity." + activityName;
+        engagementTextAnnouncementActivity.Attributes.Append(doc.CreateAttribute("android", "exported", EngagementPostBuild.androidNS)).Value = "false";
 
         XmlNode engagementTextAnnouncementIntent = doc.CreateNode(XmlNodeType.Element, "intent-filter", null);
         engagementTextAnnouncementIntent.Attributes.Append(doc.CreateAttribute("tag")).Value = tagName;
@@ -608,6 +609,10 @@ public class EngagementPostBuild
 			string CTFramework = "CoreTelephony.framework";
 			Debug.Log("Adding "+ CTFramework + " to XCode Project");
 			pbx.AddFrameworkToProject(targetUID,CTFramework,true);
+
+			string UNFramework = "UserNotifications.framework";
+			Debug.Log("Adding "+ UNFramework + " to XCode Project");
+			pbx.AddFrameworkToProject(targetUID,UNFramework,false);
 			 
 		
 			const string disableAll = "ENGAGEMENT_UNITY=1,ENGAGEMENT_DISABLE_IDFA=1";

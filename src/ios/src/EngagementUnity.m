@@ -6,8 +6,8 @@
 #include "EngagementUnity.h"
 
 
-#define PLUGIN_VERSION @"1.1.0"
-#define NATIVE_VERSION @"3.2.1"
+#define PLUGIN_VERSION @"1.2.0"
+#define NATIVE_VERSION @"4.0.0"
 #define SDK_NAME @"Unity"
 
 DEFINE_NOTIFICATION(kUnityDidRegisterForRemoteNotificationsWithDeviceToken);

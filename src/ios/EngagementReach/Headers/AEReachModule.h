@@ -61,8 +61,6 @@ typedef enum _AEReachModuleState
   /* Background/Inactive state tracking */
   BOOL _didEnterBackground;
   BOOL _willResignActive;
-  BOOL _willEnterForeground;
-  BOOL _applicationDidLaunch;
   BOOL _applicationLaunchedViaSystemPush;
 
   /* Set of DLCs that are pending download (key = localId) */
