@@ -11,7 +11,7 @@
 #define UNITY_METHOD_ONSTATUSRECEIVED   "onStatusReceived"
 
 #define DEFINE_NOTIFICATION(name) \
-    __attribute__((visibility ("default"))) NSString* const name = @#name;
+    extern __attribute__((visibility ("default"))) NSString* const name = @#name;
 #define REGISTER_SELECTOR(observer,sel, notif_name)	[[NSNotificationCenter defaultCenter] \
     addObserver:observer selector:sel name:notif_name object:nil ]
 
