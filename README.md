@@ -155,6 +155,9 @@ It only works on Mac OSX, with XCode, Unity and Android Studio installed.
 
 ### History
 
+##### 1.2.1
+* Fix possible duplicate symbols when building iOS project in Unity 5.4
+
 ##### 1.2.0 
 * Updated iOS SDK to 4.0.0
 * Updated Android SDK to 4.2.3
