@@ -36,7 +36,7 @@ namespace Microsoft.Azure.Engagement.Unity
 	public class EngagementAgent : MonoBehaviour
 	{
 
-		public const string PLUGIN_VERSION = "1.2.1";
+		public const string PLUGIN_VERSION = "1.2.2";
 
 		static EngagementAgent _instance = null;
 
