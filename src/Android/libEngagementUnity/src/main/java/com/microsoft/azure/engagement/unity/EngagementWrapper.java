@@ -22,7 +22,7 @@ public class EngagementWrapper {
 
     private static final String pluginName = "UNITY";
 
-    private static final String pluginVersion = "1.2.1";
+    private static final String pluginVersion = "1.2.2";
     private static final String nativeVersion = "4.2.3"; // to eventually retrieve from the SDK itself
     private static final String unityMethod_onDataPushReceived = "onDataPushReceived";
     private static final String unityMethod_onHandleUrl = "onHandleURL";
